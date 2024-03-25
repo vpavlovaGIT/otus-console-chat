@@ -12,11 +12,8 @@ public class ClientHandler {
     private DataOutputStream out;
     private String username;
 
-    private static int usersCounter = 0;
-
-    private void generateUsername() {
-        usersCounter++;
-        this.username = "user" + usersCounter;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public ClientHandler(Server server, Socket socket) throws IOException {
@@ -24,16 +21,28 @@ public class ClientHandler {
         this.socket = socket;
         this.in = new DataInputStream(socket.getInputStream());
         this.out = new DataOutputStream(socket.getOutputStream());
-        this.generateUsername();
+        sendMessage("Введите имя пользователя:");
+        String inputName = in.readUTF();
+        setUsername(inputName);
         new Thread(() -> {
             try {
-                System.out.println("Подключился новый клиент");
+                System.out.println("Подключился новый клиент " + username);
                 while (true) {
                     String msg = in.readUTF();
                     if (msg.startsWith("/")) {
                         if (msg.startsWith("/exit")) {
                             disconnect();
                             break;
+                        }
+                        else if (msg.startsWith("/w ")) {
+                            String[] parts = msg.split(" ", 3);
+                            if (parts.length == 3) {
+                                String recipient = parts[1];
+                                String message = parts[2];
+                                server.sendPrivateMessage(this, recipient, message);
+                            } else {
+                                sendMessage("Неправильный формат личного сообщения. Используйте /w <ник> <сообщение>");
+                            }
                         }
                         continue;
                     }
@@ -78,6 +87,9 @@ public class ClientHandler {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+    public String getUsername() {
+        return username;
     }
 }
 

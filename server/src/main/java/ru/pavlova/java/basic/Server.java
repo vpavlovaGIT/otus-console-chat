@@ -10,6 +10,7 @@ public class Server {
     private int port;
     private List<ClientHandler> clients;
 
+
     public Server(int port) {
         this.port = port;
         this.clients = new ArrayList<>();
@@ -39,5 +40,16 @@ public class Server {
         for (ClientHandler c : clients) {
             c.sendMessage(message);
         }
+    }
+
+    public synchronized void sendPrivateMessage(ClientHandler sender, String recipientName, String message) {
+        for (ClientHandler recipient : clients) {
+            if (recipient.getUsername().equals(recipientName)) {
+                recipient.sendMessage(sender.getUsername() + " (private): " + message);
+                sender.sendMessage("Message sent to " + recipientName);
+                return;
+            }
+        }
+        sender.sendMessage("Error! User " + recipientName + " not found.");
     }
 }
