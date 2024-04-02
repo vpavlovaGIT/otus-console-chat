@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class ClientApplication {
+public class  ClientApplication {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         try (
