@@ -74,4 +74,17 @@ public class Server {
         }
         return false;
     }
+
+    public boolean kickUser(String userToKick) {
+        for (ClientHandler client : clients) {
+            if (client.getNickname().equals(userToKick)) {
+                client.sendMessage("Вы были отключены от чата администратором.");
+                client.disconnect();
+                return true;
+            }
+        }
+        return false;
+    }
+
+
 }
