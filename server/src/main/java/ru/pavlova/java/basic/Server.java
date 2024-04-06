@@ -11,6 +11,8 @@ public class Server {
     private List<ClientHandler> clients;
     private AuthenticationService authenticationService;
 
+    private JdbcUsersAuthenticationService jdbcUsersAuthenticationService;
+
     public AuthenticationService getAuthenticationService() {
         return authenticationService;
     }
@@ -23,8 +25,8 @@ public class Server {
 
     public void start() {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
-            this.authenticationService = new InMemoryAuthenticationService();
-            System.out.println("Сервис аутентификации запущен: " + authenticationService.getClass().getSimpleName());
+            this.jdbcUsersAuthenticationService = new JdbcUsersAuthenticationService();
+            System.out.println("Сервис аутентификации запущен: " + jdbcUsersAuthenticationService.getClass().getSimpleName());
             System.out.printf("Сервер запущен на порту: %d, ожидаем подключения клиентов\n", port);
             while (true) {
                 try {
